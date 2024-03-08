@@ -22,61 +22,22 @@ N	stages	                    result
 
 """
 
-def get_fail_rate(stages: list, current_stage: int):
-    """stage 의 실패율
-
-    Args:
-        stages (list): stage 리스트
-        stage (int): 실패율을 구할 stage
-    Return:
-        (float) 실패율
-    """
-
-    #   stages 의 길이
-    stages_len = len(stages)
-    #   해당 stage 에서 도전중인 사용자
-    current_count = stages.count(current_stage)
-
-    if current_stage == 1:
-        #   스테이지가 1 이면
-        #   실패율: 현재 스테이지 카운트 / 스테이지 개수
-        return current_count / stages_len 
-    else:
-        #   실패율: 현재 스테이지 카운트 / 스테이지 개수 - 이전 스테이지 카운트
-        return round(current_count / (stages_len - stages.count(current_stage - 1)), 3)
-
-def get_answer(fail_rate):
-    """실패율이 높은 스테이지를 내림차순으로 정렬
-
-    Args:
-        fail_rate (list): 실패율 리스트
-    Return:
-        (list): 오름차순으로 정렬된 스테이지 리스트
-    """
-
-    # for idx in fail_rate:
-
 def solution(N, stages):
-    answer = [0] * N
+    stage_counts = [0] * (1 + N + 1)
     pre_count = 0
-    fail_rate = {}
+    fail_rates = {}
+    stages_len = len(stages)
 
+    for stage in stages:
+        stage_counts[stage] += 1
 
-    for idx in range(N):
-        current_stage = idx + 1
-        #   stages 의 길이
-        stages_len = len(stages)
-        #   해당 stage 에서 도전중인 사용자
-        current_count = stages.count(current_stage)
-        #   실패율: 현재 스테이지 카운트 / 스테이지 개수 - 이전 스테이지 카운트
-        fail_rate[current_stage] = round(current_count / (stages_len - pre_count), 2)
-        #   앞전의 stage 카운트와 현재 카운트를 합산
-        pre_count += current_count
-        
-    answer = sorted(fail_rate, key=lambda x: fail_rate[x], reverse=True)
-    print(fail_rate)
-    print(answer)
+    for current_stage in range(1, N + 1):
+
+        if stage_counts[current_stage] == 0:
+            fail_rates[current_stage] = 0
+        else:
+            fail_rates[current_stage] = stage_counts[current_stage] / (stages_len - pre_count)
+            pre_count += stage_counts[current_stage]
+    answer = sorted(fail_rates, key=lambda x: fail_rates[x], reverse=True)
     
     return answer
-
-solution(5, [2, 1, 2, 6, 2, 4, 3, 3])
