@@ -1,4 +1,4 @@
-def solution(numbers: list[int]):
+def solution(numbers):
     answer = []
 
     numbers_len = len(numbers)

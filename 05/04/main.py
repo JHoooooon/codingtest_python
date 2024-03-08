@@ -33,13 +33,17 @@ def get_top_score(total_nums):
     """
     top_score = []
 
-    max_score = max(total_nums)
+    total_nums.sort(reverse=True)
+
+    max = total_nums[0]
+
+    # max = max(total_nums)
 
     for idx in range(len(total_nums)):
-        if total_nums[idx] == max_score:
+        if total_nums[idx] == max:
             top_score.append(idx + 1)
 
-    return top_score;
+    return sorted(top_score);
 
 
 def solution(answers):

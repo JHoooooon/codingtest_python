@@ -38,6 +38,7 @@ def solution(N, stages):
         else:
             fail_rates[current_stage] = stage_counts[current_stage] / (stages_len - pre_count)
             pre_count += stage_counts[current_stage]
+
     answer = sorted(fail_rates, key=lambda x: fail_rates[x], reverse=True)
     
     return answer

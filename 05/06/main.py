@@ -83,98 +83,165 @@ dirs	        answer
         -   테스트케이스로 UDLRDURL 을 하면 4 가 나와야 하는데 8 이 나온다
             -   이는 한번갔던길을 2번왕복하여, 4 * 2 의 값이 계산된다 
 
+-   코드 재정리
+
+    -  처음부터 좌표값을 저장하면 된다
+        -   좌표값 저장으로는 한번갔던길 (LR), (UD) 일때도 고려해서 처리해야 한다
+        -   좌표값을 고유해야 하므로, SET 으로 저장한다    
+        -   저장된 SET 의 좌표는 한방향이 2개이므로 (LR), (UD) 최종 처음걸어본 길을 구하기 위해
+            저장된 길이의 / 2 한 값이어야 한다
+
 """
 
-def get_mapping_idx(dirs: str):
-    """ 각 문자열의 인덱스를 매핑시킨 객체를 만드는 함수
+# def get_mapping_idx(dirs: str):
+#     """ 각 문자열의 인덱스를 매핑시킨 객체를 만드는 함수
 
-    Args:
-        dirs (str): dirs 문자열
+#     Args:
+#         dirs (str): dirs 문자열
 
-    Returns:
-        Dict[str, list[int]]: 인덱스를 매핑시킨 객체
-    """
-    mapping_idx = {'L': [], 'R': [], 'D': [], 'U': []}
+#     Returns:
+#         Dict[str, list[int]]: 인덱스를 매핑시킨 객체
+#     """
+#     mapping_idx = {'L': [], 'R': [], 'D': [], 'U': []}
 
-    for idx in range(len(dirs)):
-        if mapping_idx.get(dirs[idx]):
-            mapping_idx[dirs[idx]].append(idx)
-        else:
-            mapping_idx[dirs[idx]] = [idx]
+#     for idx in range(len(dirs)):
+#         if mapping_idx.get(dirs[idx]):
+#             mapping_idx[dirs[idx]].append(idx)
+#         else:
+#             mapping_idx[dirs[idx]] = [idx]
 
-    return mapping_idx;
+#     return mapping_idx;
 
-def get_initial_location_len(dirs: str, dir: list):
-    """처음 가본 길의 길이를 계산하는 함수
+# def get_initial_location_len(dirs: str, dir: list):
+#     """처음 가본 길의 길이를 계산하는 함수
 
-    Args:
-        dirs (str): dirs 문자열
-        dir (list): 매핑 시킨 객체에서 해당 원소의 리스트
+#     Args:
+#         dirs (str): dirs 문자열
+#         dir (list): 매핑 시킨 객체에서 해당 원소의 리스트
 
-    Returns:
-        int: 길이
-    """
+#     Returns:
+#         int: 길이
+#     """
 
-    result = 0
+#     result = 0
 
-    for idx in range(len(dir)):
-        target_dirs = []
-        if idx + 1 < len(dir) :
-            target_dirs = dirs[dir[idx]:dir[idx + 1] + 1]
-        else:
-            target_dirs = dirs[dir[idx]:dir[idx]]
+#     for idx in range(len(dir)):
+#         target_dirs = []
+#         if idx + 1 < len(dir) :
+#             target_dirs = dirs[dir[idx]:dir[idx + 1] + 1]
+#         else:
+#             target_dirs = dirs[dir[idx]:dir[idx]]
 
-        mapping_dirs = {"U": 0, "D": 0, "L": 0, "R": 0}
+#         mapping_dirs = {"U": 0, "D": 0, "L": 0, "R": 0}
 
-        if len(target_dirs) == 1:
-            continue;
-        else:
-            for char in target_dirs:
-                mapping_dirs[char] += 1
+#         if len(target_dirs) == 1:
+#             continue;
+#         else:
+#             for char in target_dirs:
+#                 mapping_dirs[char] += 1
 
-            if  (
-                mapping_dirs['U'] > 0 and
-                mapping_dirs['D'] > 0 and
-                mapping_dirs['L'] > 0 and
-                mapping_dirs['R'] > 0 and
-                mapping_dirs['U'] == mapping_dirs['D'] and
-                mapping_dirs['L'] == mapping_dirs['R']):
-                result = mapping_dirs['U'] + mapping_dirs['D'] + mapping_dirs['L'] + mapping_dirs['R'] + dir[idx]
-                break;
+#             if  (
+#                 mapping_dirs['U'] > 0 and
+#                 mapping_dirs['D'] > 0 and
+#                 mapping_dirs['L'] > 0 and
+#                 mapping_dirs['R'] > 0 and
+#                 mapping_dirs['U'] == mapping_dirs['D'] and
+#                 mapping_dirs['L'] == mapping_dirs['R']):
+#                 result = mapping_dirs['U'] + mapping_dirs['D'] + mapping_dirs['L'] + mapping_dirs['R'] + dir[idx]
+#                 break;
 
-    return result
+#     return result
 
-def get_full_location_len(mapping_idx: dict):
-    """걸어본 전체 길이를 출력하는 함수
+# def get_full_location_len(mapping_idx: dict):
+#     """걸어본 전체 길이를 출력하는 함수
 
-    Args:
-        mapping_idx (dict): idx 를 매핑시킨 딕셔너리
+#     Args:
+#         mapping_idx (dict): idx 를 매핑시킨 딕셔너리
 
-    Returns:
-        int: 전체 길이
-    """
-    result = 0
+#     Returns:
+#         int: 전체 길이
+#     """
+#     result = 0
 
-    for char in 'UDLR':
-        char_len = len(mapping_idx[char])
+#     for char in 'UDLR':
+#         char_len = len(mapping_idx[char])
 
-        if char_len > 5:
-            result += 5
-        else:
-            result += char_len
+#         if char_len > 5:
+#             result += 5
+#         else:
+#             result += char_len
 
-    return result
+#     return result
 
-def solution(dirs):
-    answer = 0
-    mapping_idx = get_mapping_idx(dirs)
+# def solution(dirs):
+#     answer = 0
+#     mapping_idx = get_mapping_idx(dirs)
 
-    for char in dirs:
-        location_len = get_initial_location_len(dirs, mapping_idx[char])
-        if location_len > answer:
-            answer = location_len
+#     for char in dirs:
+#         location_len = get_initial_location_len(dirs, mapping_idx[char])
+#         if location_len > answer:
+#             answer = location_len
     
-    if answer == 0:
-        answer = get_full_location_len(mapping_idx)
+#     if answer == 0:
+#         answer = get_full_location_len(mapping_idx)
 
-    return answer
+#     return answer
+def is_valid_point(x: int, y: int):
+    """
+    point 값이 5 혹은 -5가 넘지않은 유효한 포인트로 변환해 주는 함수
+
+    Args:
+        point ( int ): 포인트 값
+    Return:
+        ( int ): 유효한 포인트값
+    """
+    if -5 <= x <= 5 and -5 <= y <= 5 :
+        return True
+    return False
+
+def get_points(x: int, y: int, dir: str):
+    """이동된 x, y 좌표값을 반환하는 함수
+
+    Args:
+        x (int): x 좌표
+        y (int): y 좌표
+        dir (str): 이동할 방향
+
+    Returns:
+        x(int), y(int): 변경된 x,y 좌표
+    """
+    if dir == 'U':
+        y = y + 1
+    elif dir == 'D':
+        y = y - 1
+    elif dir == 'L':
+        x = x - 1
+    elif dir == 'R':
+        x = x + 1
+    return x, y
+
+def solution(dirs): 
+    #   중복된 좌표값을 없애기 위한 set
+    answer = set()
+    #   초기화된 x, y 좌표
+    x, y = 0, 0
+
+    #   dirs 순회
+    for dir in dirs:
+        #   이동된 x, y 좌표
+        moved_x, moved_y = get_points(x, y, dir)
+        if is_valid_point(moved_x, moved_y):
+            #   아래의 두 경우는 한번 지나간 경우도 포함하여 저장해야 한다
+            #   set 객체에 x, y, moved_x, moved_y 저장
+            answer.add((x, y, moved_x, moved_y))
+            #   그 반대의 경우인 moved_x, moved_y, x, y 저장
+            answer.add((moved_x, moved_y, x, y))
+
+            #   이동된 좌표값을 x, y 에 할당
+            x, y = moved_x, moved_y
+
+    print(answer)
+    print(len(answer) / 2)
+    #   모든 좌표값에서 2 를 나눈값을 반환
+    #   하나의 길은 두가지의 경우의수를 가지므로 나누어줘야 한다
+    return len(answer) / 2
