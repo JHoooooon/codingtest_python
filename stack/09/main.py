@@ -13,20 +13,17 @@
 
 """
 
-def solution(brackets: str):
-    #   diff 리스트 생성
-    diff = []
+def solution(decimal: int):
+    stack = []
 
-    #   bracket 을 item 으로 받아 순회
-    for bracket in brackets:
-        #   bracket 이 '(' 라면 append
-        if bracket == '(':
-            diff.append(bracket)
-        #   bracket 이 ')' 라면 pop
-        elif bracket == ')':
-            if not diff:
-                return False
-            diff.pop()
+    while(decimal != 0):
+        binary = decimal % 2
+        decimal = decimal // 2
+        stack.append(str(binary))
 
-    #   만약 diff 의 길이가 0 이면 True, 아니면 False
-    return True if len(diff) == 0 else False;
+    bin = ''
+
+    while(stack):
+        bin += stack.pop()
+
+    return int(bin)

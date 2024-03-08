@@ -240,8 +240,8 @@ def solution(dirs):
             #   이동된 좌표값을 x, y 에 할당
             x, y = moved_x, moved_y
 
-    print(answer)
-    print(len(answer) / 2)
+            sorted(answer, reverse=True)
+
     #   모든 좌표값에서 2 를 나눈값을 반환
     #   하나의 길은 두가지의 경우의수를 가지므로 나누어줘야 한다
     return len(answer) / 2
