@@ -43,17 +43,29 @@ def solution(s):
     #   [0, 0, 0, 0, 0, 0, 0]
     #   [0, 0, 1, 0, 0, 0, 0]
     #   [0, 2, 1, 0, 0, 0, 0]
-    #   [3, 2, 1, 0, 0, 0, 0]
+    #   [0, 2, 1, 0, 0, 0, 0]
+    #   --
+    #   [0, 2, 1, 1, 0, 0, 0]
+    #   --
+    #   [0, 2, 1, 1, 1, 0, 0]
+    #   --
+    #   [0, 2, 1, 1, 1, 1, 0]
 
     stack = [0]
     #   [0, 1]
     #   [0, 1, 2,]
-    #   [0, 1, 2, ]
+    #   ---
+    #   [0, 3]
+    #   --
+    #   [0, 4]
+    #   --
+    #   [0, 5]
+    #   [0, 5, 6]
+    #   --
 
     for i in range(1, s_len):
         while stack and s[i] < s[stack[-1]]:
             j = stack.pop()
-            print(j)
             result[j] = i - j
 
         stack.append(i)
@@ -61,7 +73,4 @@ def solution(s):
         j = stack.pop()
         result[j] = s_len - 1 - j
 
-    print(result)
     return result
-
-solution([1, 6, 9, 5, 3, 2, 7])
