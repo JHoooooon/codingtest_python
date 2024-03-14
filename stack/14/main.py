@@ -65,102 +65,142 @@
         -   "C" 명령시 current_idx 위치값을 "X" 로 표시 및 current_idx 를 undo_list 에 append
             -   만약, current_idx 가 n - 1 이라면, current_idx =- 1
             -   그렇지 않다면                      current_idx += 1
-            -   current_idx 의 위치가 "X" 라면 그다음 idx 를 할당
+            -   이동한 값이 "X" 값이라면, "X" 를 건너띄고 그 다음으로 이동
         -   "Z" 명령시 undo_list 를 pop
             -   pop 된 index 값을 "O" 로 변경   
-            -   current_idx 값은 변경되지 않음
-        -   "U X" 명령시 current_idx -= X
+            -   current_idx 값은 +- 1
+                -   pop 된 index 가 current_idx 보다 작으면 += 1
+                -   pop 된 index 가 current_idx 보다 크면 -= 1
+        -   "U N" 명령시 current_idx -= N
             -   current_idx 가 0 보다 작다면 current_idx = 0
-        -   "D X" 명령시 current_dix += X
+            -   이동한 idx 가 "X" 라면 건너띄고 그다음 idx 로 currnet_idx -= 1
+        -   "D N" 명령시 current_dix += N
             -   current_idx 가 n - 1 보다 크다면 current_idx = n - 1
+            -   이동한 idx 가 "X" 라면 건너띄고 그다음 idx 로 currnet_idx += 1
 
 -   변경된 table_list 반환
+
+---------------------------
+
+*   문제점
+
+-   풀이 실패
+
+-   "X" 값을 건너띄는 부분
+    -   pop 된 인덱스만큼 순회를 해야 하는데, 이는 비용이든다 (O(N^2))
+    -   해당 pop 된 인덱스 만큼 건너띄고 current_idx 를 업데이트하는 방법 구현못함
+    -   첫번째 원소와 마지막 원소에 대한 처리
+
+-----------------------------
+
+*   책에서의 풀이
+
+-   인덱스만 연산
+    -   N = 4, k = 2 일때 
+
+    -   cmd 명령할 up, down 처리할 배열 생성
+        -   up = [i - 1 for i in range(N)]
+            up = [-1, 0, 1, 2]
+            이렇게 하는 이유는, up 시 idx = 3 에서 2, 1, 0 으로 선택되므로, 마지막 3 은 없어도 된다
+            대신, 0 에서 up 시에 처리할 로직으로 -1 을 넣는다.
+
+        -   down = [i + 1 for i in range(N)]
+            down = [1, 2, 3, 4]
+
+            조금더 쉽게 이해하려면 가운데에 중간값을 넣어보면 왜 이렇게 했는지 이해가 간다
+            up      = [-1, 0, 1, 2]
+            k       =   0  1  2  3
+            down    = [ 1, 2, 3, 4]
+
+            위를 보면 0 1, 0 1 2, 1 2 3, 2 3 4 로 연결되는것을 볼 수 있다
+            k 의 값이 1 이면 k 의 up 은 0, down 은 2 이다
+            위의 up, down 은 이러한 특성을 만든것이다
+
+    -   이는 다음처럼 계산된다(k = 2)
+        -   cmd = "U 1" 은 다음처럼 계산된다
+            k = up[k]   #   1
+        -   cmd = "D 1" 은 다음처럼 계산된다
+            k = down[k] #   3
+        -   [1, k, 3] 순으로 정렬되어있으므로, k 의 up 은 1 이며, down 은 3 이 맞다 
+            이 부분은 리스트의 idx 를 통해 k 값으로 접근하면 그에 매칭되는 값을 찾는데 유용하다
+
+    -   이는 "C" 일때도 유용하게 사용된다
+        -   k = 2 일때 cmd = "C"
+            up[down[k]] = up[k]
+            down[up[k]] = donw[k]
+
+            -   up[down[k]] 를 보면 down[k] = 3 이고, up[k] = 1 이다.
+                즉 [-1, 0, 1, 2] 에서 [-1, 0, 1, 1] 로 변경한다
+
+            -   down[up[k]] 는 up[k] = 1 이므로 down[1] = 2 이고 down[k] = 3 이다.
+                즉 [1, 2, 3, 4] 를 [1, 3, 3, 4] 로 변경한다
+
+                살펴보면 다음과 같다
+
+                up      =   [-1, 0, 1, 1]
+                down    =   [ 1, 3, 3, 4]
+
+                이는 [0, 1, 3] 으로 만든것과 같다
+
+            -   끝값에 대해서 처리하는 로직이 필요하다
+                k = 3 일때 다음처럼 처리된다
+
+                k = 3 이면 up[k] = 2 이 되고, down[k] = 4 이다 (여기서 4 는 의미 없는 수이다) 
+                - 게다가 이대로 적용하면 up[down[k]] 일때, up[4] 가 되므로, out of range 이다   
+
+                이를 해결하기 위해, 양끝에 가상의 공간을 넣는다
+
+                up = [-1, 0, 1, 2, 3, 4]
+                down = [1, 2, 3, 4, 5, 6]
+
+                여기서 up 은 -1 과 4 가 가상의 공간이며,
+                down 은 1 과 6 이다
+
+                k 는 N - 1 까지의 정수이므로, 0 부터 3 까지 처리된다
+                이는 가상의 공간으로 시작 인덱스가 + 1 되었으니, k = k + 1 한 인덱스를 적용한다
+
+                이렇게 하면 k = 4 일때(이는 이전인덱스인 k = 3 과 시작 인덱스 + 1 을 합산한 인덱스이다)
+                -   down[k] = 5 이고 up[5] = 4 이므로, out of range 가 아니다
+
+    아무래도 나중에 한번더 살펴볼 문제인듯 싶다.
+    구현 코드는 solution.py 에 있다
+
 """
 
-def execute_cmd(n: int, cmd: str, current_idx: int, table_list: str, undo_list: list):
-    undo_lst = undo_list.copy()
-    table_lst = table_list
-    crt_idx = current_idx
-    cmd = cmd.split()
+def execute_cmd(n: int, k: 0, cmd: str):
+    #   삭제된 행의 인덱스를 저장하는 리스트
+    deleted = []
 
-    if cmd[0] == "U":
-        num = int(cmd[1])
-        crt_idx -= num
-        if crt_idx < 0:
-            crt_idx = 0
-    elif cmd[0] == "D":
-        num = int(cmd[1])
-        crt_idx += num
-        if crt_idx > n - 1:
-            crt_idx = n - 1
-    elif cmd[0] == "C":
-        undo_lst.append(crt_idx)
-        if crt_idx == n - 1:
-            crt_idx -= 1
+    #   링크드 리스트에서 각 행 위아래의 행 인덱스를 저장하는 리스트
+    up = [i - 1 for i in range(n + 2)]
+    down = [i + 1 for i in range(n + 1)]
+
+    #   현재 위치를 나타내는 인덱스
+    k += 1
+
+    #   주어진 명령어 리스트를 하나씩 처리
+    for cmd_i in cmd:
+        if cmd_i.startswith('C'):
+            deleted.append(k)
+            up[down[k]] = up[k]
+            down[up[k]] = down[k]
+            k = up[k] if n < down[k] else down[k]
+        elif cmd_i.startswith('Z'):
+            restore = deleted.pop()
+            down[up[restore]] = restore
+            up[down[restore]] = restore
         else:
-            crt_idx += 1
-    elif cmd[0] == "Z":
-        if undo_list:
-            undo = undo_lst.pop()
+            action, num = cmd_i.split()
+            if action == 'U':
+                for _ in range(int(num)):
+                    k = up[k]
+            else:
+                for _ in range(int(num)):   
+                    k = down[k]
 
-    return crt_idx, table_lst, undo_lst
+        print(up, down)
 
-# n = 8
-# k = 2
-# cmd = ["D 2","C","U 3","C","D 4","C","U 2","Z","Z"]
-# idx = k
-# table_list = ["O"] * n
-# undo_list = []
-
-# idx, table_list, undo_list = execute_cmd(n, "D 2", idx, table_list, undo_list)
-# print(idx, table_list, undo_list)
-# idx, table_list, undo_list = execute_cmd(n, "C", idx, table_list, undo_list)
-# print(idx, table_list, undo_list)
-# idx, table_list, undo_list = execute_cmd(n, "U 3", idx, table_list, undo_list)
-# print(idx, table_list, undo_list)
-# idx, table_list, undo_list = execute_cmd(n, "C", idx, table_list, undo_list)
-# print(idx, table_list, undo_list)
-# idx, table_list, undo_list = execute_cmd(n, "D 4", idx, table_list, undo_list)
-# print(idx, table_list, undo_list)
-# idx, table_list, undo_list = execute_cmd(n, "C", idx, table_list, undo_list)
-# print(idx, table_list, undo_list)
-# idx, table_list, undo_list = execute_cmd(n, "U 2", idx, table_list, undo_list)
-# print(idx, table_list, undo_list)
-# idx, table_list, undo_list = execute_cmd(n, "Z", idx, table_list, undo_list)
-# print(idx, table_list, undo_list)
-# idx, table_list, undo_list = execute_cmd(n, "Z", idx, table_list, undo_list)
-# print(idx, table_list, undo_list)
-
-n = 8
-k = 2
-cmd = ["D 2","C","U 3","C","D 4","C","U 2","Z","Z","U 1","C"]
-idx = k
-table_list = ["O"] * n
-undo_list = []
-
-idx, table_list, undo_list = execute_cmd(n, "D 2", idx, table_list, undo_list)
-print(idx, table_list, undo_list)
-idx, table_list, undo_list = execute_cmd(n, "C", idx, table_list, undo_list)
-print(idx, table_list, undo_list)
-idx, table_list, undo_list = execute_cmd(n, "U 3", idx, table_list, undo_list)
-print(idx, table_list, undo_list)
-idx, table_list, undo_list = execute_cmd(n, "C", idx, table_list, undo_list)
-print(idx, table_list, undo_list)
-idx, table_list, undo_list = execute_cmd(n, "D 4", idx, table_list, undo_list)
-print(idx, table_list, undo_list)
-idx, table_list, undo_list = execute_cmd(n, "C", idx, table_list, undo_list)
-print(idx, table_list, undo_list)
-idx, table_list, undo_list = execute_cmd(n, "U 2", idx, table_list, undo_list)
-print(idx, table_list, undo_list)
-idx, table_list, undo_list = execute_cmd(n, "Z", idx, table_list, undo_list)
-print(idx, table_list, undo_list)
-idx, table_list, undo_list = execute_cmd(n, "Z", idx, table_list, undo_list)
-print(idx, table_list, undo_list)
-idx, table_list, undo_list = execute_cmd(n, "U 1", idx, table_list, undo_list)
-print(idx, table_list, undo_list)
-idx, table_list, undo_list = execute_cmd(n, "C", idx, table_list, undo_list)
-print(idx, table_list, undo_list)
-
+execute_cmd(4, 2, ['C', 'U 2', 'C'])
 
 def solution(n, k, cmd):
     currnet_idx = k

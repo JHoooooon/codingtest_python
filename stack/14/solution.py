@@ -29,6 +29,8 @@ def solution(n, k, cmd):
                 for _ in range(int(num)):   
                     k = down[k]
 
+        print(up, down)
+
     answer = ["O"] * n
 
     for i in deleted:
