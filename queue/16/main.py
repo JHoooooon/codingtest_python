@@ -33,7 +33,6 @@ progresses	                speeds	            return
         -   leftpop 한 index 값을 result 배열에 append 한다
 -   result 를 반환한다 
 
-
 """
 
 from collections import deque
