@@ -16,7 +16,7 @@ solution 함수의 매개변수로 다리에 올라갈 수 있는 트럭 수 bri
 -   truck_weights의 길이는 1 이상 10,000 이하입니다.
 -   모든 트럭의 무게는 1 이상 weight 이하입니다.
 
-*   문제 풀이
+*   이해
 
 ------- 잘못이해 -----------------
 
@@ -64,34 +64,107 @@ queue 자료구조로 다음과 같이 처리해본다
 
 5, 5, [2, 2, 2, 2, 1, 1, 1, 1, 1]
 
-0        _                          _                 [2, 2, 2, 2, 1, 1, 1, 1, 1]   
-1        _                          2                 [2, 2, 2, 1, 1, 1, 1, 1]   
-2        _                          2, 2              [2, 2, 1, 1, 1, 1, 1]   
-3        _                          2, 2              [2, 2, 1, 1, 1, 1, 1]   
-4        _                          2, 2              [2, 2, 1, 1, 1, 1, 1]   
-5        2                          2                 [2, 2, 1, 1, 1, 1, 1]   
-6        2, 2                       2                 [2, 1, 1, 1, 1, 1]   
-7        2, 2                       2, 2              [1, 1, 1, 1, 1]   
-8        2, 2                       2, 2, 1           [1, 1, 1, 1]   
-9        2, 2                       2, 2, 1           [1, 1, 1, 1]   
-10       2, 2, 2                    2, 1              [1, 1, 1, 1]   
-11       2, 2, 2, 2                 1                 [1, 1, 1, 1]   
-12       2, 2, 2, 2, 1              1                 [1, 1, 1]   
-13       2, 2, 2, 2, 1              1, 1              [1, 1]   
-14       2, 2, 2, 2, 1              1, 1, 1           [1]   
-15       2, 2, 2, 2, 1              1, 1, 1, 1        []   
-16       2, 2, 2, 2, 1, 1           1, 1, 1           []   
-17       2, 2, 2, 2, 1, 1, 1        1, 1              []   
-18       2, 2, 2, 2, 1, 1, 1, 1     1                 []   
-19       2, 2, 2, 2, 1, 1, 1, 1, 1                    []   
+0    []                         []                    [2, 2, 2, 2, 1, 1, 1, 1, 1]
+1    []                         [2]                   [2, 2, 2, 1, 1, 1, 1, 1]
+2    []                         [2, 2]                [2, 2, 1, 1, 1, 1, 1]
+2    []                         [2, 2]                [2, 2, 1, 1, 1, 1, 1]
+3    []                         [2, 2]                [2, 2, 1, 1, 1, 1, 1]
+4    []                         [2, 2]                [2, 2, 1, 1, 1, 1, 1]
+5    []                         [2, 2]                [2, 2, 1, 1, 1, 1, 1]
+6    [2]                        [2, 2]                [2, 1, 1, 1, 1, 1]
+7    [2, 2]                     [2, 2]                [1, 1, 1, 1, 1]
+8    [2, 2]                     [2, 2, 1]             [1, 1, 1, 1]
+9    [2, 2]                     [2, 2, 1]             [1, 1, 1, 1]
+10   [2, 2]                     [2, 2, 1]             [1, 1, 1, 1]
+11   [2, 2, 2]                  [2, 1, 1]             [1, 1, 1]
+12   [2, 2, 2, 2]               [1, 1]                [1, 1, 1]
+13   [2, 2, 2, 2]               [1, 1, 1]             [1, 1]
+14   [2, 2, 2, 2]               [1, 1, 1, 1]          [1]
+15   [2, 2, 2, 2]               [1, 1, 1, 1, 1]       []
+16   [2, 2, 2, 2, 1]            [1, 1, 1, 1]          []
+17   [2, 2, 2, 2, 1, 1]         [1, 1]                []
+18   [2, 2, 2, 2, 1, 1, 1]      [1]                   []
+19   [2, 2, 2, 2, 1, 1, 1 , 1]  []                    []
 
-이역시 5 단위로 목적지에 도착하는것을 볼 수 있다
+1.  시간단위는 하나의 단위유닛이다 
+2.  트럭 1대는 bridge_length 가 5 일때, 한번 이동하는데 걸리는 시간단위는 1 이다
+3.  트럭이 진입할때, 1초 이며, 다리를 건너는데 걸리는 시간은 bridge_length 이다
+4.  처음 삽입된 이후 1 ~ 5 초이후 6초가 되어야 목적지에 도착한다
+5.  그다음 삽입된 이후 2 ~ 6 초 이후 7 초가 되어야 목적지에 도착한다
+    and so on...
 
--   bridge_length 단위마다, 목적지 도착되어야 한다
--   시작은 1 초 부터 해당하는 truck 이 다리위에 들어간다
--   이 두부분을 추가적으로 고친다
+*   문제 풀이
+
+-   문제가 완벽히 이해되었다 풀어보자!!
+
+-   time 변수 선언
+    -   초기값 0
+
+-   truck_length 값을 합산할 total 을 선언
+    -   초기값 0
+
+-   bridge_length 길이를 가진 pendings 배열을 선언
+    bridge_length = 5
+    ['X', 'X', 'X', 'X', 'X']
+
+-   truck_lengths 를 순회
+    -   time 값에 1 을 합산
+    -   truck_length 값 첫번째 값을 pop 한다
+    -   pop 한 truck_length 값을 total 값에 합산한다  
+
+-   pendings 배열의 첫번째 원소가 'X' 가 아니면,
+    -   total 값에서 pop 한 원소의 값을 빼주어야 다음 insert 될 원소를 추가할수 있다
+        -   pendings 에서 첫번째 원소 pop
+        -   total - pop 한 첫번째 원소
+
+-   total 이 width 보다 작거나 같으면,
+    -   대기열에 해당 원소를 푸시해주어야 한다
+        -   pendings 배열의 첫번째 원소를 pop
+        -   해당 truck_length 값을 push
+-   그렇지 않으면,
+    -   pendings 배열의 첫번째 원소를 pop
+    -   'X' 를 push
+    -   truck_weights 에 0 번째 원소에 truck 을 다시 insert
+
+-   순회완료되면 남은 pendings 배열의 개수를 time 에 더한다
+    -   truck_weights 값이 0 이 될때까지 순회하므로,
+        순회완료되면 마지막 집합은 pendings 배열에 들어가 있다
+        그러므로 pendings 배열의 길이값을 time 에 더하면 원하는 값이
+        나온다
+
+-   time 반환
+
 
 """
+
+def solution(bridge_length, weight, truck_weights):
+    time = 0
+    total = 0
+    pendings = ['X' for _ in range(bridge_length)]
+
+    while(len(truck_weights) > 0):
+        time += 1
+        truck = truck_weights.pop(0)
+        total += truck
+
+        poped_pending = pendings.pop(0)
+
+        if poped_pending != 'X':
+            total -= poped_pending
+
+        if total <= weight:
+            pendings.append(truck)
+        else:
+            total -= truck
+            truck_weights.insert(0, truck)
+            pendings.append('X')
+
+    time += len(pendings)
+
+    return time
+
+
+
 #   첫번째 실패
 # def get_pending_trucks(bridge_length, truck_weights, weight):
 #     pendings = []
@@ -176,40 +249,3 @@ queue 자료구조로 다음과 같이 처리해본다
 #             else:
 #                 time += (pending_len + (bridge_length - pending_len) + pending_len)
 #     return time
-
-def solution(bridge_length, weight, truck_weight):
-    max_weight = 0
-    times = 0 
-    truck_weight_len = len(truck_weight)
-
-    while len(truck_weight) > 0:
-        if truck_weight_len == 1:
-            return bridge_length + 1
-
-        if truck_weight:
-            truck = truck_weight.pop(0)
-            max_weight += truck
-
-            if max_weight < weight:
-                times += 1
-            else:
-                if max_weight > weight:
-                    truck_weight.insert(truck, 0)
-                #   bridge 길이만큼 이동
-                times += (bridge_length - times) + times
-                max_weight = 0
-                # time = 0
-    # times += bridge_length
-    print(times)
-
-    return times
-
-print(solution(
-    # 100, 100, [10,10,10,10,10,10,10,10,10,10],
-    # 100, 100, [10]
-    2, 10, [7,4,5,6]
-    # 5, 5, [2, 2, 2, 2, 1, 1, 1, 1, 1]
-    # 7, 7, [1, 1, 1, 1, 1, 3, 3]
-    # 1, 1, [1, 1, 1]
-))
-
