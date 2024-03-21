@@ -24,6 +24,7 @@ participant	                                        completion	                 
 ["mislav", "stanko", "mislav", "ana"]	            ["stanko", "ana", "mislav"]	                    "mislav"
 
 """
+
 def solution(participant, completion):
     answer = []
     count_list = {}
@@ -42,7 +43,6 @@ def solution(participant, completion):
         if count > 0:
             answer.append(player)
 
-    print(answer)
     return answer
 
 solution(
