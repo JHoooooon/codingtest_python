@@ -77,7 +77,6 @@ def solution(id_list, report, k):
 
         report_hash[id].add(reported_id) 
 
-
     for reported_ids in report_hash.values():
         out_id = 0
 
