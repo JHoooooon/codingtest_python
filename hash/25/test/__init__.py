@@ -1,17 +1,20 @@
 INPUT = [
     [
-        ["muzi", "frodo", "apeach", "neo"],
-        ["muzi frodo","apeach frodo","frodo neo","muzi neo","apeach muzi"],
-        2
+        ["ABCFG", "AC", "CDE", "ACDE", "BCFG", "ACDEH"],
+        [2,3,4],	
     ],
     [
-        ["con", "ryan"],
-        ["ryan con", "ryan con", "ryan con", "ryan con"],
-        3
+        ["ABCDE", "AB", "CD", "ADE", "XYZ", "XYZ", "ACD"],
+        [2,3,5],    
     ],
+    [
+        ["XYZ", "XWY", "WXA"],
+        [2,3,4],
+    ]
 ];
 
 OUTPUT = [
-    [2, 1, 1, 0],
-    [0, 0],
+    ["AC", "ACDE", "BCFG", "CDE"],
+    ["ACD", "AD", "ADE", "CD", "XYZ"],
+    ["WX", "XY"],
 ]
